@@ -2,17 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//:) This script is responsible for:
+//:) This script is responsible for: Animating the player plane
 public class AnimatePlane : MonoBehaviour
 {
     public Transform elevator, aileron_left, aileron_right, propeller;
     private float propellerSpeed;
 
-    private void Start()
-    {
-       // elevatorStartRotation = elevator.rotation;
-    }
-
+  
     void Update()
     {
         propeller.Rotate(0, propellerSpeed, 0, Space.Self);

@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     float speedMax = 10f;
     float accelerationSpeed = 0.2f;
     private FollowCamera followCamera;
+    
+    
     void Start()
     {
 
@@ -22,6 +24,14 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            if(Time.timeScale == 0)
+            {
+                Time.timeScale = 1;
+            }
+            else Time.timeScale = 0;
+        }
 
         speed = speedMax;
         if (Input.GetKey(KeyCode.LeftShift))

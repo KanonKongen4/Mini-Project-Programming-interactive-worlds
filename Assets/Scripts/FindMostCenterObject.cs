@@ -5,7 +5,7 @@ using UnityEngine;
 //:) This script is responsible for:
 public class FindMostCenterObject : MonoBehaviour
 {
-    private float limitLow = 0.28f, limitHigh = 0.72f, limitXLow = 0.35f, limitXHigh = 0.65f;
+    private float limitYLow = 0.28f, limitYHigh = 0.72f, limitXLow = 0.35f, limitXHigh = 0.65f;
     private IEnumerator TargetFinder;
     private Vector2 screenSize;
     private SpawnEnemies spawnEnemies;
@@ -13,26 +13,21 @@ public class FindMostCenterObject : MonoBehaviour
     public GameObject targetObject, crosshairGM;
     void Start()
     {
-        screenSize[0] = Screen.width;
-        screenSize[1] = Screen.height;
+        screenSize[0] = Screen.width; //Getting the width of the screen in pixels
+        screenSize[1] = Screen.height;//Getting the height of the screen in pixels
 
         spawnEnemies = FindObjectOfType<SpawnEnemies>();
         gameCam = Camera.main;
 
         StartCoroutine(FindTarget());
-        MoveCrossOutOfSight();
+        MoveCrossOutOfSight(); //Move the crosshair to a point in 3D space, which the player is unlikely to see
     }
 
     private void AttachCrosshairToObject(GameObject gm)
     {
-        crosshairGM.transform.SetParent(gm.transform, false);
-        crosshairGM.transform.localPosition = Vector3.zero;
+        crosshairGM.transform.SetParent(gm.transform, false); //makes the crosshair gameobject a child of the input gameobject
+        crosshairGM.transform.localPosition = Vector3.zero; //Resets the crosshair gameobject position
     }
-    //public void DetachCrosshair()
-    //{
-    //    targetObject = null;
-    //    crosshairGM.transform.SetParent(null, false);
-    //}
 
     public void MoveCrossOutOfSight()
     {
@@ -43,23 +38,25 @@ public class FindMostCenterObject : MonoBehaviour
     {
         float diversion = 0;
 
-        for (int i = 0; i < spawnEnemies.enemies.Count; i++)
+        for (int i = 0; i < spawnEnemies.enemies.Count; i++) //Loops through the list of spawned enemies
         {
-            Vector3 pos = gameCam.WorldToViewportPoint(spawnEnemies.enemies[i].transform.position);
+            Vector3 pos = gameCam.WorldToViewportPoint(spawnEnemies.enemies[i].transform.position); // Transforming the enemy world position to screen coordinates
+            // ranging from 0,0 at bottom left to 1,1 at top right //  The z position is in world units from the camera.
             if (pos.z > 13)
             {
-                if (pos.x > limitXLow && pos.x < limitXHigh && pos.y > limitLow && pos.y < limitHigh)
+                if (pos.x > limitXLow && pos.x < limitXHigh && pos.y > limitYLow && pos.y < limitYHigh) // if the position if within the limis..
                 {
-                    float lengthCathetusOpposite = 0.5f - pos.x;
-                    float lengthCathetusAdjacent = 0.5f - pos.y;
-                    float hypothenuse = Mathf.Sqrt(Mathf.Pow(lengthCathetusOpposite, 2) + Mathf.Pow(lengthCathetusOpposite, 2));
-                    Debug.Log("pos x " + pos.x + ", pos y:  " + pos.y + ", pos z:  " + pos.z + "hypothenuse is: " + hypothenuse);
+                    float lengthCathetusOpposite = 0.5f - pos.x; //..calculate the length of the opposite cathetus
+                    float lengthCathetusAdjacent = 0.5f - pos.y;//..calculate the length of the adjacent cathetus
 
-                    if (diversion < hypothenuse)
+                    float hypothenuse = Mathf.Sqrt(Mathf.Pow(lengthCathetusOpposite, 2) + Mathf.Pow(lengthCathetusOpposite, 2)); //..calculate the length of the hyphotenuse aka. the distance from the center of the screen to the enemy
+                    //Debug.Log("pos x " + pos.x + ", pos y:  " + pos.y + ", pos z:  " + pos.z + "hypothenuse is: " + hypothenuse);
+
+                    if (diversion < hypothenuse) //checks if the current diversion if less than the calculated distance
                     {
-                        diversion = hypothenuse;
+                        diversion = hypothenuse; //... sets diversion to the distance
                         //TODO: find enemy closest to center of screen;
-                        targetObject = spawnEnemies.enemies[i].gameObject;
+                        targetObject = spawnEnemies.enemies[i].gameObject; // ... target object is set by the index
                         AttachCrosshairToObject(targetObject);
                     }
                 }
@@ -75,7 +72,7 @@ public class FindMostCenterObject : MonoBehaviour
             if (targetObject != null)
             {
                 Vector3 pos = gameCam.WorldToViewportPoint(targetObject.transform.position);
-                if (pos.z < 13 || pos.x < limitXLow || pos.x > limitXHigh || pos.y < limitLow || pos.y > limitHigh)
+                if (pos.z < 13 || pos.x < limitXLow || pos.x > limitXHigh || pos.y < limitYLow || pos.y > limitYHigh)
                 {
                     targetObject = null;
                     MoveCrossOutOfSight();

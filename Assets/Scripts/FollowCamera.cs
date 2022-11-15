@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//:) This script is responsible for:
+//:) This script is responsible for: Smoothly following the player and shaking the screen
 public class FollowCamera : MonoBehaviour
 {
 
@@ -24,16 +24,11 @@ public class FollowCamera : MonoBehaviour
 
     void Update()
     {
-        //if (Input.GetKey(KeyCode.LeftAlt))
-        //    followDistance = followDistanceOriginal /3;
-        //else
-        //    followDistance = followDistanceOriginal;
 
-        newPos = (camFollowPoint.position - camFollowPoint.forward * followDistance) + (camFollowPoint.up * followHeight);
+        newPos = (camFollowPoint.position - camFollowPoint.forward * followDistance) + (camFollowPoint.up * followHeight); //Calculating the new target position for the camera
        
-        transform.position = Vector3.Lerp(transform.position,newPos,followSpeed * Time.deltaTime);
-        transform.rotation = Quaternion.Lerp(transform.rotation, camFollowPoint.rotation, rotateSpeed * Time.deltaTime);
-
+        transform.position = Vector3.Lerp(transform.position,newPos,followSpeed * Time.deltaTime); // Lerping towards the position
+        transform.rotation = Quaternion.Lerp(transform.rotation, camFollowPoint.rotation, rotateSpeed * Time.deltaTime);//lerping towards the rotation of the follow object
 
 
     }
@@ -55,9 +50,9 @@ public class FollowCamera : MonoBehaviour
        
         while (true)
         {
-            mg -= 0.4f;
-            if(mg < 0) mg = 0;
-            transform.position += new Vector3(Random.Range(-mg, mg), Random.Range(-mg, mg), 0);
+            mg -= 0.4f;  //Reducing the magnitude of the shake over time
+            if(mg < 0) mg = 0; // Avoiding the magnitude becoming negative, thus beginnning to shake again
+            transform.position += new Vector3(Random.Range(-mg, mg), Random.Range(-mg, mg), 0); //moving the camera in random ways 
             yield return new WaitForSeconds(0.05f);
         }
     }
